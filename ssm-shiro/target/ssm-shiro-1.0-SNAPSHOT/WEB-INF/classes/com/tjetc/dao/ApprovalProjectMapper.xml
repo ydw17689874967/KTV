@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.ApprovalProjectMapper">
+    <select id="selectApprovalProject" resultMap="BaseResultMap">
+        select p.id,p.title,p.`desc`,p.type,p.item_cost,p.item_profit,
+        p.create_time,p.last_update_time,ps.audit_status
+        from project p
+        LEFT JOIN project_status ps on p.state=ps.id
+        where p.state BETWEEN 1 and 6
+        ORDER BY p.id desc
+    </select>
+    <resultMap id="BaseResultMap" type="com.tjetc.entity.ApprovalProject">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="desc" property="desc"></result>
+        <result column="type" property="type"></result>
+        <result column="item_cost" property="itemCost"></result>
+        <result column="item_profit" property="itemProfit"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="last_update_time" property="lastUpdateTime"></result>
+        <result column="audit_status" property="auditStatus"></result>
+    </resultMap>
+
+    <update id="updateApprovalStatus" parameterType="java.lang.Integer">
+        UPDATE project SET state=7
+        where id=#{id}
+    </update>
+
+    <select id="selectLikeTitle" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select p.id,p.title,p.`desc`,p.type,p.item_cost,p.item_profit,
+        p.create_time,p.last_update_time,ps.audit_status
+        from project p
+        LEFT JOIN project_status ps on p.state=ps.id
+        where p.state BETWEEN 1 and 6
+				and p.title like "%"#{title}"%"
+        ORDER BY p.id desc
+    </select>
+
+
+</mapper>

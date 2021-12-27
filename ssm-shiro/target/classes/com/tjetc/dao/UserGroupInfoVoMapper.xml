@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.UserGroupInfoMapper">
+
+
+    <resultMap id="userGroupInfoVoMap" type="UserGroupInfoVo">
+        <id column="id" property="id"></id>
+        <result column="real_name" property="realName"></result>
+    </resultMap>
+
+    <select id="selectGroupUserInfoByXzzz" resultMap="userGroupInfoVoMap">
+        select u.id, ui.real_name
+        from group_user gu
+                 left join `user` u on gu.user_id = u.id
+                 left join user_info ui on ui.id = u.id
+        where gu.group_id = (select gu.group_id
+                             from `user` u
+                                      left join group_user gu on u.id = gu.user_id
+                             where username = #{username}) and u.state=0
+    </select>
+
+
+    <insert id="addTask" parameterType="task" useGeneratedKeys="true" keyProperty="id">
+        insert into task(`desc`, project_id, state)
+        VALUES (#{desc}, #{projectId}, #{state});
+    </insert>
+
+    <insert id="addTaskAndId">
+        insert into task_id(task_id, user_id)
+        VALUES (#{taskId}, #{userId})
+    </insert>
+
+</mapper>

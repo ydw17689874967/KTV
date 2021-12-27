@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.TaskIdMapper">
+  <resultMap id="BaseResultMap" type="com.tjetc.entity.TaskId">
+    <result column="task_id" jdbcType="BIGINT" property="taskId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+  </resultMap>
+  <insert id="insert" parameterType="com.tjetc.entity.TaskId">
+    insert into task_id (task_id, user_id)
+    values (#{taskId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select task_id, user_id
+    from task_id
+  </select>
+</mapper>

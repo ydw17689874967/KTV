@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.ProjectCountMapper">
+    <resultMap id="projectTimeCountMap" type="projectTimeCount">
+        <result property="time" column="day"></result>
+        <result property="counts" column="count"></result>
+    </resultMap>
+    <select id="selectUserCounts" resultMap="projectTimeCountMap">
+        select a.`day`, ifnull(b.count, 0) count
+        from
+            (select DATE_SUB(curdate(), INTERVAL 0 DAY) `day` union select DATE_SUB(curdate(), INTERVAL 1 DAY) `day` union
+            select DATE_SUB(curdate(), INTERVAL 2 DAY) `day` union select DATE_SUB(curdate(), INTERVAL 3 DAY) `day` union
+            select DATE_SUB(curdate(), INTERVAL 4 DAY) `day` union select DATE_SUB(curdate(), INTERVAL 5 DAY) `day` union
+            select DATE_SUB(curdate(), INTERVAL 6 DAY) `day`) a left join
+            (select DATE_FORMAT(create_time, '%Y%-%m-%d') days, count(*) `count`
+            from user where DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date (create_time) group by days) b
+        on a.`day` = b.days
+        order by a.`day`
+    </select>
+
+    <select id="selectProjectCounts" resultMap="projectTimeCountMap">
+        select a.`day`, ifnull(b.count, 0) count
+        from
+            (select DATE_SUB(curdate(), INTERVAL 0 DAY) `day` union select DATE_SUB(curdate(), INTERVAL 1 DAY) `day` union
+            select DATE_SUB(curdate(), INTERVAL 2 DAY) `day` union select DATE_SUB(curdate(), INTERVAL 3 DAY) `day` union
+            select DATE_SUB(curdate(), INTERVAL 4 DAY) `day` union select DATE_SUB(curdate(), INTERVAL 5 DAY) `day` union
+            select DATE_SUB(curdate(), INTERVAL 6 DAY) `day`) a left join
+            (select DATE_FORMAT(create_time, '%Y%-%m-%d') days, count(*) `count`
+            from project where DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date (create_time) group by days) b
+        on a.`day` = b.days
+        order by a.`day`
+    </select>
+
+</mapper>
+

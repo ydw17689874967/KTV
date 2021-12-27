@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.TaskMapper">
+  <resultMap id="BaseResultMap" type="com.tjetc.entity.Task">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="project_id" jdbcType="BIGINT" property="projectId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from task
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.tjetc.entity.Task">
+    insert into task (id, desc, project_id, 
+      state)
+    values (#{id,jdbcType=BIGINT}, #{desc,jdbcType=VARCHAR}, #{projectId,jdbcType=BIGINT}, 
+      #{state,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.tjetc.entity.Task">
+    update task
+    set desc = #{desc,jdbcType=VARCHAR},
+      project_id = #{projectId,jdbcType=BIGINT},
+      state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, desc, project_id, state
+    from task
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, desc, project_id, state
+    from task
+  </select>
+</mapper>

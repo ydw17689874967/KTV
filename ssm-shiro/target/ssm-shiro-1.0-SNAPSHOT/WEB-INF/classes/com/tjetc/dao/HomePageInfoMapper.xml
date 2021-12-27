@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.HomePageInfoMapper">
+    <select id="selectUserRoleId" parameterType="string" resultType="long">
+        select role_id from user_role where user_id = (select id from user where username = #{username});
+    </select>
+    <select id="selectCountByState" parameterType="int" resultType="long">
+        select count(id) from project where state = #{state}
+    </select>
+    <select id="selectStaffCount" parameterType="int" resultType="long">
+        select count(id) from user where state != 1
+    </select>
+    <select id="selectManageGroupCount" resultType="long">
+        select count(id) from `group`
+    </select>
+    <select id="selectPayForMoney" resultType="double">
+        select sum(item_cost) from project where state = 6
+    </select>
+    <select id="selectPayCount" resultType="Long">
+        select count(id) from project where state >=5 and state != 6
+    </select>
+    <select id="selectApplyCount" resultType="Long">
+        select count(id) from project where group_id = (select group_id from group_user where user_id = (select id from user where username = #{username}));
+    </select>
+    <select id="selectOkProjectCount" resultType="Long">
+        select count(id) from project where state = 12 and group_id = (select group_id from `group_user` where user_id = (select id from user where username = #{username}))
+    </select>
+    <select id="selectGroupStaffCount" resultType="Long">
+        select count(group_id) from group_user where group_id = (select id from `group` where leader_id = (select id from user where username = #{username}))
+    </select>
+    <select id="selectNoOkTaskCount" resultType="Long">
+        select count(id) from task t left join task_id t_i on t.id = t_i.task_id where t.state = 0 and  t_i.user_id = (select id from user where username = #{username})
+    </select>
+    <select id="selectTaskCount" resultType="long">
+        select count(id) from task t left join task_id t_i on t.id = t_i.task_id where  t_i.user_id = (select id from user where username = #{username})
+    </select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.ProjectAndVideoMapper">
+    <select id="selectOneProject" parameterType="long" resultMap="baseMap">
+       select p.title,p.`desc`,p.type,p.item_cost,p.item_profit,v.video
+       from project p
+       left join video v
+       on v.pid=p.id where p.id=#{id}
+    </select>
+    
+    <resultMap id="baseMap" type="projectAndVideoVo">
+        <result column="title" property="title"></result>
+        <result column="desc" property="desc"></result>
+        <result column="type" property="type"></result>
+        <result column="item_cost" property="itemCost"></result>
+        <result column="item_profit" property="itemProfit"></result>
+        <result column="video" property="video"></result>
+    </resultMap>
+
+    <update id="updateProjectAndVideo" parameterType="projectAndVideoVo">
+        update project set `desc`=#{desc},
+                           item_cost=#{itemCost},
+                           item_profit=#{itemProfit},
+                           last_update_time=#{lastUpdateTime}
+        where id=#{id}
+    </update>
+
+    <update id="updateVideo" parameterType="projectAndVideoVo">
+        update video set video=#{video}
+        where pid=#{id}
+    </update>
+
+    <update id="updateState" parameterType="long">
+        update project set state=8 where id = #{id}
+    </update>
+
+</mapper>

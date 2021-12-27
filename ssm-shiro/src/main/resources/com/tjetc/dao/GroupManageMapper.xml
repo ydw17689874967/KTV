@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.GroupManageMapper">
+    <select id="selectAllGroup" resultMap="groupInfoMap">
+        select g.id,ui.avatar,g.`name`,ui.real_name,ui.phone_number
+        from `group` g
+        inner join `user` u
+        inner join user_info ui
+        on g.leader_id=u.id and u.id=ui.id
+    </select>
+    <resultMap id="groupInfoMap" type="groupManageVo">
+        <id column="id" property="id"></id>
+        <result column="avatar" property="avatar"></result>
+        <result column="name" property="name"></result>
+        <result column="real_name" property="realName"></result>
+        <result column="phone_number" property="phoneNumber"></result>
+    </resultMap>
+
+    <select id="selectMemberInfoByGId" parameterType="long" resultMap="memberInfoMap">
+        select ui.id,
+               ui.real_name,
+               ui.age,
+               ui.sex,
+               ui.email,
+               ui.phone_number
+        from user_info ui
+            inner join group_user gu
+                on ui.id = gu.user_id
+                       and gu.group_id=#{id}
+    </select>
+
+    <resultMap id="memberInfoMap" type="userUserInfoVo">
+        <result column="real_name" property="realName"></result>
+        <result column="age" property="age"></result>
+        <result column="sex" property="sex"></result>
+        <result column="email" property="email"></result>
+        <result column="phone_number" property="phoneNumber"></result>
+    </resultMap>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.GroupMemberMapper">
+    <select id="selectMemberInfo" parameterType="long" resultMap="MembersInfoMap">
+        select gu.user_id,f.avatar,f.real_name,f.age,f.sex,f.phone_number,f.email ,t.`desc`,t.state
+        from group_user gu
+        inner join user_info f on gu.user_id=f.id
+        inner join (select gu.user_id ,t.task_id   from group_user gu inner join task_id t on gu.user_id=t.user_id) ti
+        inner join task t
+        on t.id=ti.task_id
+        and gu.user_id=f.id
+        and gu.user_id =  ti.user_id
+        and gu.group_id=#{id}
+    </select>
+
+    <resultMap id="MembersInfoMap" type="memberInfoVo">
+        <id column="user_id" property="id"></id>
+        <result column="avatar" property="avatar"></result>
+        <result column="real_name" property="realName"></result>
+        <result column="age" property="age"></result>
+        <result column="sex" property="sex"></result>
+        <result column="phone_number" property="phoneNumber"></result>
+        <result column="email" property="email"></result>
+        <result column="desc" property="desc"></result>
+        <result column="state" property="state"></result>
+    </resultMap>
+    <select id="selectMemberInfo1" parameterType="long" resultMap="newInfoMap">
+        select u_t.* from (select distinct gu.user_id,f.avatar,f.real_name,f.age,f.sex,f.phone_number,f.email
+from group_user gu
+left join user_info f on gu.user_id=f.id
+left join (select gu.user_id ,t.task_id from group_user gu
+left join task_id t on gu.user_id=t.user_id) ti on gu.user_id=f.id and gu.user_id = ti.user_id and gu.group_id=#{id}) u_t left join user u on u.id = u_t.user_id where u.state != 1
+    </select>
+
+    <resultMap id="newInfoMap" type="memberInfoVo">
+        <id column="user_id" property="id"></id>
+        <result column="avatar" property="avatar"></result>
+        <result column="real_name" property="realName"></result>
+        <result column="age" property="age"></result>
+        <result column="sex" property="sex"></result>
+        <result column="phone_number" property="phoneNumber"></result>
+        <result column="email" property="email"></result>
+    </resultMap>
+    
+    <select id="selectTaskState" parameterType="long" resultMap="stateMap">
+        select t.id,t.`desc`,t.`state`,p.title from task t
+        inner join task_id ti
+        inner join project p
+        on t.id=ti.task_id
+        and t.project_id=p.id
+        and ti.user_id=#{id}
+    </select>
+
+    <resultMap id="stateMap" type="memberInfoVo">
+        <result column="id" property="tid"></result>
+        <result column="desc" property="desc"></result>
+        <result column="state" property="state"></result>
+        <result column="title" property="title"></result>
+    </resultMap>
+    
+    <select id="selectGroupIdByUsername" resultType="long" parameterType="string">
+        select group_id from group_user
+        where user_id=(select id from `user` where username=#{username})
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.ProjectStatusMapper">
+  <resultMap id="BaseResultMap" type="com.tjetc.entity.ProjectStatus">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="audit_status" jdbcType="VARCHAR" property="auditStatus" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from project_status
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tjetc.entity.ProjectStatus">
+    insert into project_status (id, audit_status)
+    values (#{id,jdbcType=INTEGER}, #{auditStatus,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.tjetc.entity.ProjectStatus">
+    update project_status
+    set audit_status = #{auditStatus,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, audit_status
+    from project_status
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, audit_status
+    from project_status
+  </select>
+</mapper>

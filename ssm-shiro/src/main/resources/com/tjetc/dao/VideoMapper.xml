@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.VideoMapper">
+  <resultMap id="BaseResultMap" type="com.tjetc.entity.Video">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="video" jdbcType="VARCHAR" property="video" />
+    <result column="pid" jdbcType="BIGINT" property="pid" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from video
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.tjetc.entity.Video">
+    insert into video (id, video, pid)
+    values (#{id,jdbcType=BIGINT}, #{video,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.tjetc.entity.Video">
+    update video
+    set video = #{video,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, video, pid
+    from video
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, video, pid
+    from video
+  </select>
+    <insert id="insertVideo" parameterType="video" useGeneratedKeys="true" keyProperty="id">
+        insert into video(video,pid) values(#{video},#{pid})
+    </insert>
+    <select id="selectByPid" resultMap="videoMap" parameterType="long">
+        select id,video,pid from video where pid = #{pid}
+    </select>
+  <select id="selectPid" resultType="long">
+    select pid from video where pid = #{pid}
+  </select>
+  <update id="updateVideo">
+    update video set video=#{video} where pid = #{pid}
+  </update>
+    <resultMap id="videoMap" type="video">
+        <id column="id" property="id"></id>
+        <result column="video" property="video"></result>
+        <result column="pid" property="pid"></result>
+    </resultMap>
+</mapper>

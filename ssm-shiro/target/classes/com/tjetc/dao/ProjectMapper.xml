@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.ProjectMapper">
+  <select id="selectProjectAndGroupByStatus" resultMap="ProjectAndGroupMap">
+    select p.id,p.title,p.type,p.`desc`,p.item_cost,p.item_profit,p.state,g.`name`,p.create_time
+    from project p,`group` g where group_id = g.id and p.state in
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+    #{item}
+    </foreach>
+    order by p.id desc
+  </select>
+  <resultMap id="ProjectAndGroupMap" type="com.tjetc.entity.vo.ProjectGroupInfo">
+    <result column="id" property="projectId"></result>
+    <result column="title" property="title"></result>
+    <result column="type" property="type"></result>
+    <result column="desc" property="desc"></result>
+    <result column="item_cost" property="itemCost"></result>
+    <result column="item_profit" property="itemProfit"></result>
+    <result column="state" property="stateId"></result>
+    <result column="name" property="groupName"></result>
+    <result column="create_time" property="createTime"></result>
+  </resultMap>
+  <select id="selectProjectAndGroupByState" resultMap="ProjectAndGroupMap">
+    select p.id,p.title,p.type,p.`desc`,p.item_cost,p.item_profit,p.state,g.`name`,p.create_time
+    from project p,`group` g where group_id = g.id and p.state=#{state} order by p.id desc
+  </select>
+  <update id="passProjectState">
+    update project set state = #{state} WHERE id = #{pid}
+  </update>
+  <update id="updateProjectLastUpdateTime">
+    update project set last_update_time = #{lastUpdateTime} where id = #{pid}
+  </update>
+    <resultMap id="BaseResultMap" type="com.tjetc.entity.Project">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="desc" jdbcType="VARCHAR" property="desc"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="group_id" jdbcType="INTEGER" property="groupId"/>
+        <result column="item_cost" jdbcType="DOUBLE" property="itemCost"/>
+        <result column="item_profit" jdbcType="DOUBLE" property="itemProfit"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="last_update_time" jdbcType="TIMESTAMP" property="lastUpdateTime"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from project
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.tjetc.entity.Project">
+        insert into project (title, `desc`,
+                             type, group_id, item_cost,
+                             item_profit, create_time, last_update_time,
+                             state)
+        values (#{title,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR},
+                #{type,jdbcType=VARCHAR}, #{groupId,jdbcType=INTEGER}, #{itemCost,jdbcType=DOUBLE},
+                #{itemProfit,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, #{lastUpdateTime,jdbcType=TIMESTAMP},
+                #{state,jdbcType=INTEGER})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.tjetc.entity.Project">
+        update project
+        set title            = #{title,jdbcType=VARCHAR},
+            desc             = #{desc,jdbcType=VARCHAR},
+            type             = #{type,jdbcType=VARCHAR},
+            group_id         = #{groupId,jdbcType=INTEGER},
+            item_cost        = #{itemCost,jdbcType=DOUBLE},
+            item_profit      = #{itemProfit,jdbcType=DOUBLE},
+            create_time      = #{createTime,jdbcType=TIMESTAMP},
+            last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
+            state            = #{state,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               title, desc, type, group_id, item_cost, item_profit, create_time, last_update_time,
+            state
+        from project
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id,
+               title, desc, type, group_id, item_cost, item_profit, create_time, last_update_time,
+            state
+        from project
+    </select>
+
+
+    <resultMap id="projectInfoMap" type="projectInfoVo">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="desc" property="desc"></result>
+        <result column="type" property="type"></result>
+        <result column="name" property="groupName"></result>
+        <result column="item_cost" property="itemCost"></result>
+        <result column="item_profit" property="itemProfit"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="last_update_time" property="lastUpdateTime"></result>
+        <result column="audit_status" property="status"></result>
+    </resultMap>
+    <select id="getAllProject" resultMap="projectInfoMap">
+        select p.id,
+               p.title,
+               p.`desc`,
+               p.type,
+               g.`name`,
+               p.item_cost,
+               p.item_profit,
+               p.create_time,
+               p.last_update_time,
+               ps.audit_status
+        from project p
+                 left join `group` g on g.id = p.group_id
+                 left join project_status ps on p.state = ps.id
+        where p.state >= 7
+          and group_id = (select gu.group_id
+                          from `user` u
+                                   left join group_user gu on u.id = gu.user_id
+                          where username = #{username})
+        order by id desc
+    </select>
+
+
+    <select id="getProjectById" resultMap="projectInfoMap">
+        select p.id,
+               p.title,
+               p.`desc`,
+               p.type,
+               g.`name`,
+               p.item_cost,
+               p.item_profit,
+               p.create_time,
+               p.last_update_time,
+               ps.audit_status
+        from project p
+                 left join `group` g on g.id = p.group_id
+                 left join project_status ps on p.state = ps.id
+        where p.id = #{id}
+    </select>
+
+    <update id="updateProjectById">
+        update project
+        set `state`= 8,
+            last_update_time=#{lastUpdateTime}
+        where id = #{id}
+    </update>
+</mapper>

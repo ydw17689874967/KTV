@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.tjetc.entity.User">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="user_info_id" jdbcType="BIGINT" property="userInfoId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="state" jdbcType="BOOLEAN" property="state"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from user
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.tjetc.entity.User">
+        insert into user (id, username, password,
+                          user_info_id, create_time, update_time,
+                          state)
+        values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+                #{userInfoId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+                #{state,jdbcType=INTEGER})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.tjetc.entity.User">
+        update user
+        set username     = #{username,jdbcType=VARCHAR},
+            password     = #{password,jdbcType=VARCHAR},
+            user_info_id = #{userInfoId,jdbcType=BIGINT},
+            create_time  = #{createTime,jdbcType=TIMESTAMP},
+            update_time  = #{updateTime,jdbcType=TIMESTAMP},
+            state        = #{state,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select id, username, password, user_info_id, create_time, update_time, state
+        from user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, username, password, user_info_id, create_time, update_time, state
+        from user
+    </select>
+
+
+    <select id="selectByUsername" resultMap="BaseResultMap">
+        select id, username, `password`, user_info_id, create_time, update_time, state
+        from `user`
+        where username = #{username}
+    </select>
+
+
+    <resultMap id="userPermissionsVo" type="userPermissionsVo">
+        <id column="id" property="userId"></id>
+        <result column="username" property="username"></result>
+        <collection property="permissionNames" ofType="String">
+            <result column="permission_name"></result>
+        </collection>
+    </resultMap>
+    <select id="selectPermissionsByUsername" resultMap="userPermissionsVo">
+        select u.id, u.username, p.permission_name
+        from `user` u
+                 left join user_role ur on u.id = ur.user_id
+                 left join permission_role pr on ur.role_id = pr.role_id
+                 left join permission p on p.id = pr.permission_id
+        where username = #{username}
+    </select>
+
+    <update id="updateById" parameterType="user">
+        update user
+        set username    = #{username},
+            password    = #{password},
+            update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <select id="selectByUserInfoId" parameterType="long" resultType="long">
+        select user_info_id
+        from user
+        where id = #{id}
+    </select>
+
+    <insert id="insertUser" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        insert into user (username, password,
+                          user_info_id, create_time, update_time)
+        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+                #{userInfoId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateUserState" parameterType="long">
+        update user
+        set state=1
+        where id = #{id}
+    </update>
+
+    <select id="selectAvatarByUsername" parameterType="string" resultType="string">
+        select u_i.avatar
+        from user u
+                 left join user_info u_i
+                           on u.user_info_id = u_i.id
+        where u.username = #{username}
+    </select>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjetc.dao.PersonalDetailMapper">
+    <select id="selectUserInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT u.id,u.username,u.`password`,u.create_time,u.update_time,
+        ui.age,ui.sex,ui.email,ui.avatar,ui.real_name,ui.phone_number
+        from `user` u
+        left JOIN user_info ui
+        ON u.user_info_id=ui.id
+        where u.username=#{username}
+    </select>
+    <resultMap id="BaseResultMap" type="com.tjetc.entity.PersonalDetail">
+        <id column="id" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="update_time" property="updateTime"></result>
+        <result column="age" property="age"></result>
+        <result column="sex" property="sex"></result>
+        <result column="email" property="email"></result>
+        <result column="avatar" property="avatar"></result>
+        <result column="real_name" property="realName"></result>
+        <result column="phone_number" property="phoneNumber"></result>
+    </resultMap>
+
+    <update id="updatePassword" parameterType="personalDetail">
+        UPDATE `user`
+        SET `password`=#{password,jdbcType=VARCHAR}
+        where username=#{username}
+    </update>
+</mapper>
